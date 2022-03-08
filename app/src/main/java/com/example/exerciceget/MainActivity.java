@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +25,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     List<Repo> maListe;
- 
+    monAdapteur adapter;
     Repo premierRepo;
     public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
@@ -42,9 +44,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         setNavigationViewListener();
-        TextView tv = findViewById(R.id.teext);
+
 
         initRecycler();
+
+        RemplirRecycler();
 
         Service service = RetrofitUtility.get();
 
@@ -70,10 +74,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (response.isSuccessful())
                 { Log.i("REPONSE",response.body().toString());
 
-                    maListe = response.body();
+                    adapter.list = response.body();
+                    adapter.notifyDataSetChanged();
+                            maListe = response.body();
                     premierRepo = maListe.get(0);
                     String valeur = premierRepo.name;
-                    tv.setText(premierRepo.name);
+
                 }
 
             }
@@ -86,7 +92,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void RemplirRecycler() {
+
+
+    }
+
     private void initRecycler() {
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new monAdapteur();
+        recyclerView.setAdapter(adapter);
 
 
     }
